@@ -7,6 +7,7 @@ import project.allmuniz.tinderclone.entities.User;
 import project.allmuniz.tinderclone.repositories.MatchRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MatchService {
@@ -19,13 +20,13 @@ public class MatchService {
         this.userService = userService;
     }
 
-    public List<Match> findMatchesByProfileId(String profileEmail) {
-        User profileEntity = userService.findByEmail(profileEmail);
-        return matchRepository.findByProfile1IdOrProfile2Id(profileEntity.getId(), profileEntity.getId());
+    public List<Match> findMatchesByProfileId() {
+        Optional<User> profileEntity = userService.getUser();
+        return matchRepository.findByProfile1IdOrProfile2Id(profileEntity.get().getId(), profileEntity.get().getId());
     }
 
-    public List<UserResponseDto> profileMatchByProfileIdDto(String profileEmail) {
-        User profileEntity = userService.findByEmail(profileEmail);
-        return matchRepository.findMatchedProfilesAsDto(profileEntity.getId());
+    public List<UserResponseDto> profileMatchByProfileIdDto() {
+        Optional<User> profileEntity = userService.getUser();
+        return matchRepository.findMatchedProfilesAsDto(profileEntity.get().getId());
     }
 }

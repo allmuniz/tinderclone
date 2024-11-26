@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import project.allmuniz.tinderclone.entities.Like;
 import project.allmuniz.tinderclone.entities.User;
 
+import java.util.Optional;
+
 @Service
 public class LikeService {
 
@@ -16,10 +18,10 @@ public class LikeService {
         this.userService = userService;
     }
 
-    public void sendLike(String profileEmail, Long likedProfileId) {
-        User profileAuthenticate = userService.findByEmail(profileEmail);
+    public void sendLike(Long likedProfileId) {
+        Optional<User> profileAuthenticate = userService.getUser();
 
-        Like likeEvent = new Like(profileAuthenticate.getId(), likedProfileId);
+        Like likeEvent = new Like(profileAuthenticate.get().getId(), likedProfileId);
         rabbitTemplate.convertAndSend("likeQueue", likeEvent);
     }
 }

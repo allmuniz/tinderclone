@@ -22,12 +22,6 @@ public class AuthController {
         this.userService = userService;
     }
 
-    // Endpoint de Registro de Usuário
-    @PostMapping("/register")
-    public User register(@RequestBody UserRequestDto userRequest) {
-        return userService.createUser(userRequest);
-    }
-
     // Endpoint de Login
     @PostMapping("/login")
     public ResponseEntity<AuthDto> auth(@RequestBody AuthDto user) {
