@@ -14,7 +14,6 @@ import project.allmuniz.tinderclone.repositories.UserRepository;
 
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -29,11 +28,7 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("Email já cadastrado");
         }
 
-        User user = new User();
-        user.setName(userRequest.name());
-        user.setEmail(userRequest.email());
-        user.setPassword(passwordEncoder.encode(userRequest.password()));
-        user.setRoles(Collections.singletonList("ROLE_USER"));
+        User user = new User(userRequest, passwordEncoder.encode(userRequest.password()));
         return userRepository.save(user);
     }
 

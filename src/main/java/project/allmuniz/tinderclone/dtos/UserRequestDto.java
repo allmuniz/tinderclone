@@ -1,4 +1,13 @@
 package project.allmuniz.tinderclone.dtos;
 
-public record UserRequestDto(String name, String email, String password) {
+import java.time.LocalDate;
+
+public record UserRequestDto(
+        String name,
+        String email,
+        String password,
+        String phone,
+        LocalDate birthday,
+        String address
+) {
 }
