@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const token = localStorage.getItem("authToken");
+
+            if (!token) {
+                alert("Você não está logado. Redirecionando para a página de login.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            try {
+                // Faz a requisição para buscar os dados do usuário
+                const response = await fetch("http://localhost:8080/auth/me", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": token,
+                    },
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    document.getElementById("welcomeMessage").innerText = `Bem-vindo, ${user.name}!`;
+                } else {
+                    throw new Error("Falha ao buscar dados do usuário.");
+                }
+            } catch (error) {
+                alert(error.message);
+                window.location.href = "login.html";
+            }
+
+            // Configura o botão de logout
+            const logoutButton = document.getElementById("logoutButton");
+            logoutButton.addEventListener("click", () => {
+                localStorage.removeItem("authToken"); // Remove o token
+                window.location.href = "login.html"; // Redireciona para login
+            });
+        });
+    </script>
+</head>
+<body>
+<h1 id="welcomeMessage">Bem-vindo!</h1>
+<button id="logoutButton">Logout</button>
+</body>
+</html>
