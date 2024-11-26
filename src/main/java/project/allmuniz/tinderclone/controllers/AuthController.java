@@ -37,7 +37,7 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<UserResponseDto> getLoggedUser() {
         Optional<User> user = userService.getUser();
-        return user.map(value -> ResponseEntity.ok(new UserResponseDto(value.getName(), value.getEmail()))).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+        return user.map(value -> ResponseEntity.ok(new UserResponseDto(value.getName(), value.getPhone(), value.getAddress()))).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
 }

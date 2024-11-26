@@ -12,6 +12,8 @@ import project.allmuniz.tinderclone.dtos.UserRequestDto;
 import project.allmuniz.tinderclone.entities.User;
 import project.allmuniz.tinderclone.repositories.UserRepository;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Optional;
@@ -27,6 +29,7 @@ public class UserService implements UserDetailsService {
         if (userRepository.findByEmail(userRequest.email()).isPresent()) {
             throw new RuntimeException("Email já cadastrado");
         }
+        checkAge(userRequest.birthday());
 
         User user = new User(userRequest, passwordEncoder.encode(userRequest.password()));
         return userRepository.save(user);
@@ -45,6 +48,15 @@ public class UserService implements UserDetailsService {
                 Base64.getEncoder().withoutPadding().encodeToString(password.getBytes())
         ).id(userEntity.getId()).build();
     }
+
+    public void checkAge(LocalDate birthDate) {
+        int age = Period.between(birthDate, LocalDate.now()).getYears();
+        if (age < 18) {
+            throw new IllegalArgumentException("A idade mínima é 18 anos.");
+        }
+    }
+
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
