@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Usuário</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const user = JSON.parse(localStorage.getItem("selectedUser"));
+
+            if (!user) {
+                alert("Nenhum usuário foi selecionado. Redirecionando para a página inicial.");
+                window.location.href = "home.html";
+                return;
+            }
+
+            // Atualiza a mensagem de boas-vindas com o nome do usuário
+            document.getElementById("welcomeMessage").innerText = `Bem-vindo, ${user.name}!`;
+
+            // Exibe os detalhes do usuário
+            const userDetailsContainer = document.getElementById("userDetailsContainer");
+            userDetailsContainer.innerHTML = `
+                <p><strong>Nome:</strong> ${user.name}</p>
+                <p><strong>Telefone:</strong> ${user.phone}</p>
+                <p><strong>Endereço:</strong> ${user.address}</p>
+            `;
+        });
+    </script>
+</head>
+<body>
+<h1 id="welcomeMessage"></h1>
+<div id="userDetailsContainer"></div>
+<button onclick="window.location.href='home.html'">Voltar</button>
+</body>
+</html>

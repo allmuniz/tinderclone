@@ -28,7 +28,7 @@ public class SecurityConfig {
                         "/v3/api-docs/**",
                         "/v2/api-docs.yaml",
                         "/swagger-ui/**", "/swagger-ui.html",
-                        "/login.html", "/home.html").permitAll())
+                        "/login.html", "/home.html", "/userDetails.html").permitAll())
                 .authorizeHttpRequests(authorize->authorize.anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .build();

@@ -15,7 +15,7 @@
             }
 
             try {
-                // Faz a requisição para buscar os dados do usuário
+                // Faz a requisição para buscar os dados do usuário logado
                 const response = await fetch("http://localhost:8080/auth/me", {
                     method: "GET",
                     headers: {
@@ -32,7 +32,57 @@
             } catch (error) {
                 alert(error.message);
                 window.location.href = "login.html";
+                return;
             }
+
+            // Função para buscar as combinações de perfis
+            async function fetchProfileMatches() {
+                try {
+                    const response = await fetch("http://localhost:8080/match/users", {
+                        method: "GET",
+                        headers: {
+                            "Authorization": token,
+                        },
+                    });
+
+                    if (response.ok) {
+                        const profiles = await response.json();
+                        displayProfileNames(profiles); // Exibe os nomes dos perfis na tela
+                    } else {
+                        console.error("Erro ao buscar combinações de perfis:", response.status);
+                    }
+                } catch (error) {
+                    console.error("Erro ao fazer a requisição:", error.message);
+                }
+            }
+
+            // Função para exibir os nomes dos usuários na tela
+            function displayProfileNames(profiles) {
+                const profilesContainer = document.getElementById("profilesContainer");
+                profiles.forEach(profile => {
+                    const profileElement = document.createElement("div");
+
+                    // Cria um elemento para o nome
+                    const nameElement = document.createElement("span");
+                    nameElement.textContent = profile.name;
+
+                    // Cria um botão para visualizar os detalhes
+                    const viewButton = document.createElement("button");
+                    viewButton.textContent = "Ver Detalhes";
+                    viewButton.addEventListener("click", () => {
+                        // Armazena os dados do usuário no localStorage e redireciona
+                        localStorage.setItem("selectedUser", JSON.stringify(profile));
+                        window.location.href = "userDetails.html";
+                    });
+
+                    profileElement.appendChild(nameElement);
+                    profileElement.appendChild(viewButton);
+                    profilesContainer.appendChild(profileElement);
+                });
+            }
+
+            // Chama a função para buscar os perfis
+            await fetchProfileMatches();
 
             // Configura o botão de logout
             const logoutButton = document.getElementById("logoutButton");
@@ -45,6 +95,7 @@
 </head>
 <body>
 <h1 id="welcomeMessage">Bem-vindo!</h1>
+<div id="profilesContainer"></div> <!-- Contêiner para exibir os nomes dos perfis e botões -->
 <button id="logoutButton">Logout</button>
 </body>
 </html>

@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(name = "tb_likes")
 public class Like implements Serializable {
 
     @Id

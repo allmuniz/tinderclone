@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(name = "tb_matches")
 public class Match implements Serializable {
 
     @Id

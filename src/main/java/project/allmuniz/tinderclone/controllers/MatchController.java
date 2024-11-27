@@ -28,7 +28,7 @@ public class MatchController {
         return ResponseEntity.ok(matches);
     }
 
-    @GetMapping("/profiles")
+    @GetMapping("/users")
     public ResponseEntity<List<UserResponseDto>> getProfileMatches() {
         List<UserResponseDto> profiles = matchService.profileMatchByProfileIdDto();
         return ResponseEntity.ok(profiles);
