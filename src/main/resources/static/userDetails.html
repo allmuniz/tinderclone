@@ -5,14 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Usuário</title>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             const user = JSON.parse(localStorage.getItem("selectedUser"));
+            const token = localStorage.getItem("authToken");
 
             if (!user) {
                 alert("Nenhum usuário foi selecionado. Redirecionando para a página inicial.");
                 window.location.href = "home.html";
                 return;
             }
+
+            const response = await fetch(`http://localhost:8080/user/${user.id}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": token,
+                },
+            });
 
             // Atualiza a mensagem de boas-vindas com o nome do usuário
             document.getElementById("welcomeMessage").innerText = `Bem-vindo, ${user.name}!`;

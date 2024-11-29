@@ -47,6 +47,7 @@
 
                     if (response.ok) {
                         const profiles = await response.json();
+                        console.log(profiles);
                         displayProfileNames(profiles); // Exibe os nomes dos perfis na tela
                     } else {
                         console.error("Erro ao buscar combinações de perfis:", response.status);

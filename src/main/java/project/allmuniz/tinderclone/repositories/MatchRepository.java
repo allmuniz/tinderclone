@@ -12,7 +12,7 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
 
     List<Match> findByProfile1IdOrProfile2Id(Long profile1_id, Long profile2_id);
 
-    @Query("SELECT new project.allmuniz.tinderclone.dtos.UserResponseDto(p.name, p.phone, p.address) " +
+    @Query("SELECT new project.allmuniz.tinderclone.dtos.UserResponseDto(p.id, p.name, p.phone, p.address) " +
             "FROM User p " +
             "WHERE p.id IN (" +
             "SELECT m.profile1Id FROM Match m WHERE m.profile2Id = :profileId " +

@@ -17,6 +17,12 @@ public class RabbitConfig {
     }
 
     @Bean
+    public Queue chatQueue() {
+        return new Queue("chatQueue", true); // Fila genérica para mensagens de chat
+    }
+
+
+    @Bean
     public MessageConverter messageConverter() {
         Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
         converter.setClassMapper(new AllowedClassMapper());
