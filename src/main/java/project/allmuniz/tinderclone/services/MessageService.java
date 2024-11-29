@@ -12,15 +12,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ChatService {
+public class MessageService {
 
-    private final ChatMessageProducer chatMessageProducer;
+    private final MessageProducer messageProducer;
     private final MessageRepository messageRepository;
     private final UserService userService;
     private final ConversationService conversationService;
 
-    public ChatService(ChatMessageProducer chatMessageProducer, MessageRepository messageRepository, UserService userService, ConversationService conversationService) {
-        this.chatMessageProducer = chatMessageProducer;
+    public MessageService(MessageProducer messageProducer, MessageRepository messageRepository, UserService userService, ConversationService conversationService) {
+        this.messageProducer = messageProducer;
         this.messageRepository = messageRepository;
         this.userService = userService;
         this.conversationService = conversationService;
@@ -38,7 +38,7 @@ public class ChatService {
             messageToSend.setTimestamp(LocalDateTime.now());
             messageToSend.setRead(false);
             messageToSend.setConversation(conversation.get());
-            chatMessageProducer.sendMessage(messageToSend);
+            messageProducer.sendMessage(messageToSend);
             return "Menssagem enviada";
         }
         return "Mensagem não enviada";

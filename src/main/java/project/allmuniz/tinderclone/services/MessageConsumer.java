@@ -6,11 +6,11 @@ import project.allmuniz.tinderclone.entities.Message;
 import project.allmuniz.tinderclone.repositories.MessageRepository;
 
 @Service
-public class ChatMessageConsumer {
+public class MessageConsumer {
 
     private final MessageRepository messageRepository;
 
-    public ChatMessageConsumer(MessageRepository messageRepository) {
+    public MessageConsumer(MessageRepository messageRepository) {
         this.messageRepository = messageRepository;
     }
 

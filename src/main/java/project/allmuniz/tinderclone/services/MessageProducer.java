@@ -5,11 +5,11 @@ import org.springframework.stereotype.Service;
 import project.allmuniz.tinderclone.entities.Message;
 
 @Service
-public class ChatMessageProducer {
+public class MessageProducer {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public ChatMessageProducer(RabbitTemplate rabbitTemplate) {
+    public MessageProducer(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
