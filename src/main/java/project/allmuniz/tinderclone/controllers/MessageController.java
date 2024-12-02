@@ -1,7 +1,6 @@
 package project.allmuniz.tinderclone.controllers;
 
 import org.springframework.web.bind.annotation.*;
-import project.allmuniz.tinderclone.dtos.ConversationRequestDto;
 import project.allmuniz.tinderclone.dtos.MessageRequestDto;
 import project.allmuniz.tinderclone.entities.Message;
 import project.allmuniz.tinderclone.services.MessageService;
@@ -23,9 +22,9 @@ public class MessageController {
         return messageService.sendMessage(message, idReceiver);
     }
 
-    @PostMapping("/")
-    public List<Message> getMessages(@RequestBody ConversationRequestDto conversation) {
-        return messageService.buscaMenssagensConversaTest(conversation.user1(), conversation.user2());
+    @GetMapping("/{receiverId}")
+    public List<Message> getMessages(@PathVariable Long receiverId) {
+        return messageService.findMessages(receiverId);
     }
 
 

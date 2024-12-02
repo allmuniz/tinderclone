@@ -44,13 +44,11 @@ public class MessageService {
         return "Mensagem não enviada";
     }
 
-    public List<Message> buscaMenssagensConversaTest(Long user1, Long user2){
-        Optional<Conversation> conversation = conversationService.findConversation(user1, user2);
-        List<Message> messages = messageRepository.findByConversationOrderByTimestampAsc(conversation.get());
-        for (Message message : messages) {
-            System.out.println(message.getContent());
-        }
-        return messages;
+    public List<Message> findMessages(Long user2){
+        Optional<User> userLogger = userService.getUser();
+
+        Optional<Conversation> conversation = conversationService.findConversation(userLogger.get().getId(), user2);
+        return messageRepository.findByConversationOrderByTimestampAsc(conversation.get());
     }
 
 
