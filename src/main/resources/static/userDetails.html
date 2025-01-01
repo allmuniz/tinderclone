@@ -12,10 +12,12 @@
             padding: 0;
             background-color: #f5f5f5;
         }
+
         h1 {
             text-align: center;
             color: #333;
         }
+
         #userDetailsContainer {
             margin: 10px;
             padding: 10px;
@@ -23,10 +25,10 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         #messagesContainer {
             display: flex;
-            flex-direction: column; /* Garante que as mensagens fiquem empilhadas */
-            align-items: flex-start; /* Por padrão, alinha à esquerda */
+            flex-direction: column;
             margin: 10px;
             padding: 10px;
             background-color: #e5e5e5;
@@ -34,43 +36,32 @@
             max-height: 500px;
             overflow-y: auto;
         }
+
         .message {
-            display: flex;
-            flex-direction: column;
             margin: 5px 0;
             padding: 10px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            max-width: 40%; /* Ajuste para 40% da largura */
-            word-wrap: break-word; /* Quebra de palavras */
+            max-width: 40%;
+            word-wrap: break-word;
         }
+
         .message.sent {
-            align-self: flex-end; /* Move mensagens enviadas para a direita */
+            align-self: flex-end;
             background-color: #d1ffd1;
         }
+
         .message.received {
-            align-self: flex-start; /* Move mensagens recebidas para a esquerda */
+            align-self: flex-start;
             background-color: #fff;
         }
+
         .timestamp {
             font-size: 12px;
             color: #888;
             margin-top: 5px;
-            align-self: flex-end; /* Timestamp sempre à direita */
+            align-self: flex-end;
         }
-        button {
-            display: block;
-            margin: 20px auto;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
+
         #sendMessageContainer {
             display: flex;
             justify-content: space-between;
@@ -81,6 +72,7 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         #messageInput {
             flex: 1;
             margin-right: 10px;
@@ -89,6 +81,7 @@
             border-radius: 4px;
             font-size: 14px;
         }
+
         #sendMessageButton {
             padding: 10px 20px;
             background-color: #28a745;
@@ -97,6 +90,7 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
         #sendMessageButton:hover {
             background-color: #218838;
         }
@@ -128,59 +122,54 @@
 
             document.getElementById("welcomeMessage").innerText = `Conversa de ${userAuth.name} e ${user.name}!`;
 
-            // Exibe os detalhes do usuário
             const userDetailsContainer = document.getElementById("userDetailsContainer");
             userDetailsContainer.innerHTML = `
-        <p><strong>Nome:</strong> ${user.name}</p>
-        <p><strong>Telefone:</strong> ${user.phone}</p>
-        <p><strong>Endereço:</strong> ${user.address}</p>
-    `;
-
-            // Função para exibir as mensagens
-            const displayMessages = (messages) => {
-                const messagesContainer = document.getElementById("messagesContainer");
-                messagesContainer.innerHTML = ""; // Limpa as mensagens atuais
-
-                messages.forEach(message => {
-                    const time = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    const messageElement = document.createElement("div");
-
-                    if (message.senderId === userAuth.id) {
-                        messageElement.className = "message sent";
-                    } else {
-                        messageElement.className = "message received";
-                    }
-
-                    messageElement.innerHTML = `
-                <p>${message.content}</p>
-                <span class="timestamp">${time}</span>
+                <p><strong>Nome:</strong> ${user.name}</p>
+                <p><strong>Telefone:</strong> ${user.phone}</p>
+                <p><strong>Endereço:</strong> ${user.address}</p>
             `;
-                    messagesContainer.appendChild(messageElement);
-                });
+
+            const messagesContainer = document.getElementById("messagesContainer");
+
+            const displayMessage = (message, isSentByUser) => {
+                const time = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const messageElement = document.createElement("div");
+
+                messageElement.className = `message ${isSentByUser ? "sent" : "received"}`;
+                messageElement.innerHTML = `
+                    <p>${message.content}</p>
+                    <span class="timestamp">${time}</span>
+                `;
+
+                messagesContainer.appendChild(messageElement);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
             };
 
-            // Carrega as mensagens inicialmente
-            try {
-                const messagesResponse = await fetch(`http://localhost:8080/chat/${user.id}`, {
-                    method: "GET",
-                    headers: {
-                        "Authorization": token,
-                    },
-                });
+            // WebSocket Connection
+            const socket = new WebSocket(`ws://localhost:8080/chat/${userAuth.id}`, {
+                headers: {
+                    "Authorization": token,
+                },
+            });
 
-                if (messagesResponse.ok) {
-                    const messages = await messagesResponse.json();
-                    displayMessages(messages); // Exibe as mensagens
-                } else {
-                    console.error("Erro ao buscar as mensagens:", messagesResponse.status);
-                    alert("Não foi possível carregar as mensagens.");
-                }
-            } catch (error) {
-                console.error("Erro:", error);
-                alert("Ocorreu um erro ao buscar as mensagens.");
-            }
+            socket.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                const isSentByUser = message.senderId === userAuth.id;
+                displayMessage(message, isSentByUser);
+            };
 
-            // Enviar mensagem
+            socket.onopen = () => {
+                console.log("Conexão WebSocket estabelecida.");
+            };
+
+            socket.onclose = () => {
+                console.warn("Conexão WebSocket encerrada.");
+            };
+
+            socket.onerror = (error) => {
+                console.error("Erro no WebSocket:", error);
+            };
+
             const sendMessageButton = document.getElementById("sendMessageButton");
             const messageInput = document.getElementById("messageInput");
 
@@ -191,46 +180,17 @@
                     return;
                 }
 
-                try {
-                    const sendMessageResponse = await fetch(`http://localhost:8080/send/${user.id}`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": token,
-                        },
-                        body: JSON.stringify({ content }),
-                    });
+                const message = {
+                    content,
+                    senderId: userAuth.id,
+                    receiverId: user.id,
+                    timestamp: new Date(),
+                };
 
-                    if (sendMessageResponse.ok) {
-                        messageInput.value = ""; // Limpa o campo de entrada
-
-                        // Cria a nova mensagem e a adiciona diretamente na div de mensagens
-                        const newMessage = {
-                            content,
-                            senderId: userAuth.id,
-                            timestamp: new Date(),
-                        };
-
-                        const messagesContainer = document.getElementById("messagesContainer");
-                        const messageElement = document.createElement("div");
-                        messageElement.className = "message sent";
-                        messageElement.innerHTML = `
-                    <p>${newMessage.content}</p>
-                    <span class="timestamp">${new Date(newMessage.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                `;
-                        messagesContainer.appendChild(messageElement); // Adiciona a nova mensagem
-
-                    } else {
-                        console.error("Erro ao enviar a mensagem:", sendMessageResponse.status);
-                        alert("Não foi possível enviar a mensagem.");
-                    }
-                } catch (error) {
-                    console.error("Erro ao enviar a mensagem:", error);
-                    alert("Ocorreu um erro ao enviar a mensagem.");
-                }
+                socket.send(JSON.stringify(message));
+                messageInput.value = ""; // Limpa o campo de entrada
             });
         });
-
     </script>
 </head>
 <body>
